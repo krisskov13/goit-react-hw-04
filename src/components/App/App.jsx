@@ -15,6 +15,7 @@ export default function App() {
   const [query, setQuery] = useState("");
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [isEndOfCollection, setIsEndOfCollection] = useState(false);
 
   useEffect(() => {
     if (query === "") {
@@ -28,6 +29,9 @@ export default function App() {
         setImages((prevImages) => {
           return [...prevImages, ...data];
         });
+        if (data.length === 0) {
+          setIsEndOfCollection(true);
+        }
       } catch {
         setError(true);
       } finally {
@@ -44,7 +48,7 @@ export default function App() {
   };
 
   const handleLoadMore = () => {
-    setPage(page + 1);
+    setPage((prevPage) => prevPage + 1);
   };
 
   function openModal(image) {
@@ -65,7 +69,7 @@ export default function App() {
       )}
       {error && <ErrorMessage />}
       {isLoading && <Loader />}
-      {images.length > 0 && !isLoading && (
+      {images.length > 0 && !isLoading && !isEndOfCollection && (
         <LoadMoreBtn handleLoadMore={handleLoadMore} />
       )}
       <ImageModal
